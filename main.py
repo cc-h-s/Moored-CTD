@@ -11,13 +11,13 @@ import ctd
 import os
 from pathlib import Path
 import plotly.express as px
-from pyrsktools import RSK
+#from pyrsktools import RSK
 
 # Set interactive backend for matplotlib
 plt.switch_backend('Qt5Agg')  # Alternatives: 'WebAgg', 'TkAgg', etc.
 
 # Change to the script's directory
-script_dir = Path(__file__).parent
+script_dir = Path('C:\\Users\\HOLMESSMITHC\\Documents\\GitHub\\Moored-CTD\\example').parent
 os.chdir(script_dir)
 print(os.getcwd())
 
@@ -25,7 +25,7 @@ print(os.getcwd())
 #Section 2 Import metadata from yaml and calculate any derived variables
 import yaml
 
-with open(f"config_metadata.yaml", "r") as f:
+with open(f"example\config_metadata.yaml", "r") as f:
     meta = yaml.safe_load(f)
 
 #read out filename and directory for data upload
@@ -138,7 +138,7 @@ print(f"Raw data saved to {raw_output_path}")
 ###
 #%%Section 5: Extract Variables
 import yaml
-with open("../bin/variable_map.yaml", "r") as f:
+with open("bin/variable_map.yaml", "r") as f:
     var_map = yaml.safe_load(f)
 
 data_ = data.copy()
@@ -264,6 +264,10 @@ fig.savefig(f"{figDir}{figRoot}_raw_data.png", dpi=300, bbox_inches="tight")
 #%%Section 9 Plot trim indices
 
 from bin.trim_utils import plot_trimmed_var
+#
+start = 7501
+finish = 112161 + 1   # last good point +1
+#
 
 fig = plot_trimmed_var(
     data_dict=data_dict,
@@ -277,9 +281,10 @@ fig.savefig(f"{figDir}{figRoot}_trim_indices.png", dpi=300, bbox_inches="tight")
 ##
 #Section 10
 #Trim data and plot trimmed data
-from bin.trim_utils import trim_data
+#from bin.trim_utils import trim_data
+
 data_dict = {'time': time, 't': t, 'c': c, 'p': p, 'do': do}
-trimmed = trim_data(data_dict, 4675, 24691, time_trim=False, include_do=False)
+trimmed = trim_data(data_dict, start, finish, time_trim=False, include_do=False)
 print({k: v.shape for k, v in trimmed.items()})
 
 
@@ -496,7 +501,7 @@ variables = {
     'pressure': trimmed['p']
 }
 
-flag_arrays = load_flagged_arrays(rf'config_flags.yaml', variables)
+flag_arrays = load_flagged_arrays(rf'example/config_flags.yaml', variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
 
@@ -585,7 +590,7 @@ def apply_variable_attributes(ds, metadata, t, c, p):
     return ds
 
 #Load functions and merge
-metadata = load_metadata("config_metadata.yaml")
+metadata = load_metadata("example/config_metadata.yaml")
 ds = xr.Dataset.from_dataframe(flagged_df)
 ds = apply_metadata(ds, metadata)
 ds = apply_variable_attributes(ds, metadata, flagged_df['t'].values, flagged_df['c'].values, flagged_df['p'].values)
