@@ -25,7 +25,7 @@ print(os.getcwd())
 #Section 2 Import metadata from yaml and calculate any derived variables
 import yaml
 
-with open(f"example\config_metadata.yaml", "r") as f:
+with open(f"example\\config_metadata.yaml", "r") as f:
     meta = yaml.safe_load(f)
 
 #read out filename and directory for data upload
@@ -58,13 +58,14 @@ figRoot = f"{site}{year_str}{subsite}{pres}_{serial}"
 #read in data  Altered Shannon and Annie's to incorporate rsk files
 cnv = filename.endswith(".cnv")
 asc = filename.endswith(".asc")
-rbr = filename.endswith(".rsk")
+rsk = filename.endswith(".rsk")
 data = None  # Initialize empty dataset
 available_vars = []  # List to store available variable names
 
 if cnv:
-    data = ctd.from_cnv(rf'{directory}{filename}')  # Load .cnv data
-    raw_keys = data.keys()  # Get column names
+     data = ctd.from_cnv(rf'{directory}{filename}')  # Load .cnv data
+     raw_keys = data.keys()  # Get column names
+
 elif asc:
     data = pd.read_csv(
 	   rf'{directory}{filename}',
@@ -159,7 +160,7 @@ time = vars_dict.get('time')
 #Pressure: for CNV, use index; for ASC, get from vars_dict
 p = data_.index.values if cnv else vars_dict.get('p')
 #print("Extracted Pressure Data:", p)
-
+###
 #entire group below is only for asc files  MN
 # --- Time Conversion for ASC Files ---
 if asc or rsk and 'dates' in raw_keys and 'times' in raw_keys:  #added dates MN
