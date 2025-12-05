@@ -282,7 +282,7 @@ fig.savefig(f"{figDir}{figRoot}_trim_indices.png", dpi=300, bbox_inches="tight")
 ##
 #Section 10
 #Trim data and plot trimmed data
-#from bin.trim_utils import trim_data
+from bin.trim_utils import trim_data
 
 data_dict = {'time': time, 't': t, 'c': c, 'p': p, 'do': do}
 trimmed = trim_data(data_dict, start, finish, time_trim=False, include_do=False)
