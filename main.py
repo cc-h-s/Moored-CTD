@@ -63,9 +63,33 @@ data = None  # Initialize empty dataset
 available_vars = []  # List to store available variable names
 
 if cnv:
-     data = ctd.from_cnv(rf'{directory}{filename}')  # Load .cnv data
-     raw_keys = data.keys()  # Get column names
+    # --- 3.1 Find first numeric line ---
+    with open(f"{directory}{filename}", "r") as f:
+        lines = f.readlines()
 
+    data_start = None
+    for i, line in enumerate(lines):
+        s = line.strip()
+        if s and (s[0].isdigit() or s.startswith("-")):
+            data_start = i
+            break
+
+    if data_start is None:
+        raise ValueError("Could not detect start of numeric data block in the CNV file.")
+
+    df = pd.read_fwf(f"{directory}{filename}", skiprows=data_start)
+
+    colnames = []
+
+    for line in lines:
+        if line.startswith("# name"):
+            raw = line.split("=")[1].split(":")[0].strip()
+            colnames.append(raw)
+
+    df.columns = colnames[:len(df.columns)]
+
+    data = df
+    raw_keys = df.columns.tolist()
 elif asc:
     data = pd.read_csv(
 	   rf'{directory}{filename}',
@@ -156,10 +180,10 @@ t = vars_dict.get('t')
 c = vars_dict.get('c')
 do = vars_dict.get('do', None)
 time = vars_dict.get('time')
-
+p =  vars_dict.get('p')
 #Pressure: for CNV, use index; for ASC, get from vars_dict
-p = data_.index.values if cnv else vars_dict.get('p')
-#print("Extracted Pressure Data:", p)
+#p = data_.index.values if cnv else vars_dict.get('p')
+print("Extracted Pressure Data:", p)
 ###
 #entire group below is only for asc files  MN
 # --- Time Conversion for ASC Files ---
@@ -282,7 +306,7 @@ fig.savefig(f"{figDir}{figRoot}_trim_indices.png", dpi=300, bbox_inches="tight")
 ##
 #Section 10
 #Trim data and plot trimmed data
-#from bin.trim_utils import trim_data
+from bin.trim_utils import trim_data
 
 data_dict = {'time': time, 't': t, 'c': c, 'p': p, 'do': do}
 trimmed = trim_data(data_dict, start, finish, time_trim=False, include_do=False)
