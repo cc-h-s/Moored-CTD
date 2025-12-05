@@ -4,6 +4,7 @@
 'sbeopoxML/L': do  # Dissolved Oxygen (if present)
 'sal00': s  # Salinity (if present)
 'prDM': p  # Pressure (for CNV files, common key)
+'prdM': p  # Pressure (for CNV files, common key, maybe microcat)
 'pressure': p  # Pressure (for ASC files)
 'temperature': t  #temperature for ASC files
 'conductivity': c  #Conductivity for ASC files
@@ -12,4 +13,4 @@
 
 trim:
     start: 7501
-    finish: 112161
+    finish: 112160
